@@ -1,54 +1,32 @@
-<div class="header-toolbar">
-  <div class="header-title">Festivos en Colombia</div>
-</div>
-<head>
-  <link rel="stylesheet" href="src/app/app..css"> 
-</head>
-<div class="main-container">
-  <div class="section-card">
-    <div class="section-header">Validar fecha</div>
-    <div class="section-content">
-      <div class="form-row">
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Seleccione una fecha</mat-label>
-          <input matInput [matDatepicker]="picker" [(ngModel)]="fechaSeleccionada">
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-        <button class="action-button" (click)="validarFecha()">VALIDAR FECHA</button>
-      </div>
-      
-      <div *ngIf="resultadoValidacion" class="result-display">
-        {{ resultadoValidacion.esFestivo ? '✅ ' + resultadoValidacion.nombre : '❌ No es festivo' }}
-      </div>
-    </div>
-  </div>
+<mat-toolbar color="primary">Festivos de Colombia</mat-toolbar>
+<div class="container" style="margin: 20px">
+  <mat-card>
+    <mat-card-title> Buscar festivos por año</mat-card-title>
+    <mat-form-field appearance="fill">
+      <mat-label>Año</mat-label>
+      <input matInput type="number" [(ngModel)]="anio" placeholder="Ej: 2025" />
+    </mat-form-field>
+    <button mat-raised-button color="accent" (click)="buscarFestivos()">Buscar</button>
 
-  <div class="section-card">
-    <div class="section-header">Festivos en {{ anioConsulta }}</div>
-    <div class="section-content">
-      <div class="form-row">
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Año</mat-label>
-          <input matInput type="number" [(ngModel)]="anioConsulta" min="2000" max="2030">
-        </mat-form-field>
-        <button class="action-button" (click)="listarFestivos()">OBTENER FESTIVOS</button>
-      </div>
-      
-      <table class="festivos-table" *ngIf="festivos.length > 0">
-        <thead>
-          <tr>
-            <th>Festivo</th>
-            <th>Fecha</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let festivo of festivos">
-            <td>{{ festivo.nombre }}</td>
-            <td>{{ festivo.fecha | date:'fullDate' }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <ngx-datatable *ngIf="festivos.length > 0" class="material"
+      [rows]="festivos"
+      [columns]="[{ prop: 'fecha' }, { prop: 'nombre' }]"
+      [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50"
+      [rowHeight]="50">
+    </ngx-datatable>
+  </mat-card>
+
+  <mat-card style="margin-top: 20px">
+    <mat-card-title> Validar si una fecha es festivo</mat-card-title>
+    <mat-form-field appearance="fill">
+      <mat-label>Fecha</mat-label>
+      <input matInput type="date" [(ngModel)]="fecha" />
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="validarFecha()">Validar</button>
+
+    <div *ngIf="esFestivo" style="margin-top: 10px">
+      <mat-icon color="warn">event</mat-icon>
+      {{ esFestivo }}
     </div>
-  </div>
+  </mat-card>
 </div>

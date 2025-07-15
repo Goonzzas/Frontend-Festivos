@@ -1,44 +1,31 @@
 import { Component } from '@angular/core';
-import { FestivoService } from './services/festivo.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { FormsModule } from '@angular/forms';
+import { FestivosService } from './services/festivos.service';
+import { Festivo } from './models/festivo.model';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
-  standalone: true,
-  imports: [FormsModule, MatDatepickerModule, MatNativeDateModule]
+  templateUrl: './app.html',
+  styleUrls: ['./app.css']
 })
-export class App {
-  fechaSeleccionada: Date = new Date();
-  resultadoValidacion: { esFestivo: boolean, nombre?: string } | null = null;
-  anioConsulta: number = new Date().getFullYear();
-  festivos: { nombre: string, fecha: string }[] = [];
+export class AppComponent {
+  anio: number;
+  fecha: string;
+  festivos: Festivo[] = [];
+  esFestivo: string = '';
 
-  constructor(
-    private festivoService: FestivoService,
-    private snackBar: MatSnackBar
-  ) {}
+  constructor(private festivoService: FestivosService) {}
 
-  validarFecha() {
-    const fechaFormateada = this.formatDate(this.fechaSeleccionada);
-    this.festivoService.verificarFecha(fechaFormateada).subscribe({
-      next: (res: any) => this.resultadoValidacion = res,
-      error: (err: any) => this.snackBar.open('Error al validar fecha', 'Cerrar')
+  buscarFestivos(): void {
+    if (!this.anio) return;
+    this.festivoService.getFestivosPorAnio(this.anio).subscribe(data => {
+      this.festivos = data;
     });
   }
 
-  listarFestivos() {
-    this.festivoService.listarFestivosAnio(this.anioConsulta).subscribe({
-      next: (res: any) => this.festivos = res,
-      error: (err: any) => this.snackBar.open('Error al obtener festivos', 'Cerrar')
+  validarFecha(): void {
+    if (!this.fecha) return;
+    this.festivoService.validarSiEsFestivo(this.fecha).subscribe(data => {
+      this.esFestivo = data ? 'Sí es festivo 🎉' : 'No es festivo 😐';
     });
-  }
-
-  private formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
   }
 }
