@@ -1,0 +1,54 @@
+<div class="header-toolbar">
+  <div class="header-title">Festivos en Colombia</div>
+</div>
+<head>
+  <link rel="stylesheet" href="src/app/app..css"> 
+</head>
+<div class="main-container">
+  <div class="section-card">
+    <div class="section-header">Validar fecha</div>
+    <div class="section-content">
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Seleccione una fecha</mat-label>
+          <input matInput [matDatepicker]="picker" [(ngModel)]="fechaSeleccionada">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <button class="action-button" (click)="validarFecha()">VALIDAR FECHA</button>
+      </div>
+      
+      <div *ngIf="resultadoValidacion" class="result-display">
+        {{ resultadoValidacion.esFestivo ? '✅ ' + resultadoValidacion.nombre : '❌ No es festivo' }}
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header">Festivos en {{ anioConsulta }}</div>
+    <div class="section-content">
+      <div class="form-row">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Año</mat-label>
+          <input matInput type="number" [(ngModel)]="anioConsulta" min="2000" max="2030">
+        </mat-form-field>
+        <button class="action-button" (click)="listarFestivos()">OBTENER FESTIVOS</button>
+      </div>
+      
+      <table class="festivos-table" *ngIf="festivos.length > 0">
+        <thead>
+          <tr>
+            <th>Festivo</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let festivo of festivos">
+            <td>{{ festivo.nombre }}</td>
+            <td>{{ festivo.fecha | date:'fullDate' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
